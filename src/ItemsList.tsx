@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 
-import { cosmetics } from "./api";
+import { cosmetics, ApiResponse } from "./api";
 
 type ApiParams = {
   name?: string;
@@ -34,7 +34,7 @@ export const addItemToList = (value: string) => {
 };
 
 const ItemsList = () => {
-  const [apiReturn, setApiReturn] = useState();
+  const [apiReturn, setApiReturn] = useState<ApiResponse>();
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
   const [rarity, setRarity] = useState("EPIC");

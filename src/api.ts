@@ -1,6 +1,17 @@
 import axios from "axios";
 
-export const cosmetics = async (name: string, rarity: string = "EPIC") => {
+export type ApiResponse = {
+  data: {
+    status: number;
+    message: string;
+    items: Array<any>;
+  };
+};
+
+export const cosmetics = async (
+  name: string,
+  rarity: string = "EPIC"
+): Promise<ApiResponse> => {
   try {
     const instance = axios.create({
       baseURL: "https://fortnite-api.com/v2",
@@ -38,7 +49,7 @@ export const cosmetics = async (name: string, rarity: string = "EPIC") => {
   }
 };
 
-export const cosmeticsById = async (id: string) => {
+export const cosmeticsById = async (id: string): Promise<ApiResponse> => {
   try {
     const instance = axios.create({
       baseURL: "https://fortnite-api.com/v2",
