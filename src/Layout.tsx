@@ -12,10 +12,10 @@ export default function Layout() {
       templateColumns="repeat(4, 1fr)"
       gap={5}
     >
-      <GridItem colSpan={1} rowSpan={2} bg="purple">
+      <GridItem colSpan={1} rowSpan={2}>
         <ItemsFavList />
       </GridItem>
-      <GridItem colSpan={3} rowSpan={2} bg="blue.500">
+      <GridItem colSpan={3} rowSpan={2}>
         <ItemsList />
       </GridItem>
     </Grid>

@@ -1,22 +1,27 @@
 import React, { useState, useEffect } from "react";
-import { OrderedList, ListItem, Link } from "@chakra-ui/react";
+import { OrderedList, ListItem, Link, Button } from "@chakra-ui/react";
+import { DeleteIcon } from "@chakra-ui/icons";
 
-import { getItemList } from "./ItemsList";
 import { cosmeticsById } from "./api";
+import { useItemsContext } from "./hooks/useItemsContext";
 
 const ItemsFavList = () => {
   const [itemsState, setItemsState] = useState<Array<unknown>>([]);
-  useEffect(() => {
-    const items = getItemList();
-    const mountListItems = async () => {
-      Promise.all(
-        items.map(async (id: string) => await cosmeticsById(id))
-      ).then((values) => {
+  const [store, dispatch] = useItemsContext();
+
+  const getItemsData = async () => {
+    const items = store;
+    Promise.all(items.map(async (id: string) => await cosmeticsById(id))).then(
+      (values) => {
         setItemsState(values);
-      });
-    };
-    mountListItems();
-  }, []);
+      }
+    );
+  };
+
+  useEffect(() => {
+    getItemsData();
+  }, [store]);
+
   return (
     <OrderedList p="10px">
       {itemsState.map((item: any) => (
@@ -30,6 +35,15 @@ const ItemsFavList = () => {
           >
             {item.data.items[0].name}
           </Link>
+          <Button
+            w={6}
+            h={6}
+            onClick={() => {
+              dispatch({ type: "remove", value: item.data.items[0].id });
+            }}
+          >
+            <DeleteIcon />
+          </Button>
         </ListItem>
       ))}
     </OrderedList>

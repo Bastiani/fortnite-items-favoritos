@@ -17,20 +17,11 @@ import {
 import { AddIcon } from "@chakra-ui/icons";
 
 import { cosmetics, ApiResponse } from "./api";
+import { useItemsContext } from "./hooks/useItemsContext";
 
 type ApiParams = {
   name?: string;
   rarity?: string;
-};
-
-export const getItemList = () =>
-  JSON.parse(localStorage.getItem("fortniteItemsFav") || "[]") || [];
-
-export const addItemToList = (value: string) => {
-  const items = getItemList();
-  const newItems = [...items, value];
-  const uniqueItems = Array.from(new Set(newItems));
-  localStorage.setItem("fortniteItemsFav", JSON.stringify(uniqueItems));
 };
 
 const ItemsList = () => {
@@ -38,6 +29,7 @@ const ItemsList = () => {
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
   const [rarity, setRarity] = useState("EPIC");
+  const [, dispatch] = useItemsContext();
 
   const callApi = async (params: ApiParams) => {
     setLoading(true);
@@ -59,6 +51,7 @@ const ItemsList = () => {
   };
 
   const data = apiReturn?.data;
+
   return data ? (
     <Grid
       h="100vh"
@@ -68,46 +61,48 @@ const ItemsList = () => {
     >
       <GridItem>
         <form onSubmit={onSubmit}>
-          <Flex direction="row">
-            <FormControl id="name">
-              <FormLabel>Nome</FormLabel>
-              <Input
-                key="_name"
-                name="name"
-                onChange={(e: any) => setName(e.target.value)}
-                value={name}
-              />
-            </FormControl>
-            <FormControl id="rarity">
-              <FormLabel>Raridade</FormLabel>
-              <Select
-                placeholder="Escolha uma opção"
-                onChange={(e: any) => setRarity(e.target.value)}
-                value={rarity}
-              >
-                <option value="EPIC">Épico</option>
-                <option value="RARE">Raro</option>
-                <option value="LEGENDARY">Lendário</option>
-                <option value="UNCOMMON">Incomum</option>
-                <option value="gaminglegends">Série Lendas dos Jogos</option>
-                <option value="starwars">Série Star Wars</option>
-                <option value="marvel">Série Marvel</option>
-                <option value="dc">Série DC</option>
-              </Select>
-            </FormControl>
+          <Flex direction="column" m="15px">
+            <Flex direction="row" alignItems="center">
+              <FormControl id="name" mr="10px">
+                <FormLabel>Nome</FormLabel>
+                <Input
+                  key="_name"
+                  name="name"
+                  onChange={(e: any) => setName(e.target.value)}
+                  value={name}
+                />
+              </FormControl>
+              <FormControl id="rarity">
+                <FormLabel>Raridade</FormLabel>
+                <Select
+                  placeholder="Escolha uma opção"
+                  onChange={(e: any) => setRarity(e.target.value)}
+                  value={rarity}
+                >
+                  <option value="EPIC">Épico</option>
+                  <option value="RARE">Raro</option>
+                  <option value="LEGENDARY">Lendário</option>
+                  <option value="UNCOMMON">Incomum</option>
+                  <option value="gaminglegends">Série Lendas dos Jogos</option>
+                  <option value="starwars">Série Star Wars</option>
+                  <option value="marvel">Série Marvel</option>
+                  <option value="dc">Série DC</option>
+                </Select>
+              </FormControl>
+            </Flex>
             <Button
               isLoading={loading}
               loadingText="Submitting"
               colorScheme="teal"
-              variant="outline"
               type="submit"
+              mt="10px"
             >
               Submit
             </Button>
           </Flex>
         </form>
       </GridItem>
-      <GridItem bg="blue.500">
+      <GridItem>
         <Flex direction="row" wrap="wrap">
           {data.status === 200
             ? data?.items?.map((item: any) => (
@@ -118,7 +113,8 @@ const ItemsList = () => {
                   borderRadius="lg"
                   borderColor="blue.700"
                   overflow="hidden"
-                  maxW="200px"
+                  maxW="215px"
+                  p="10px"
                 >
                   {loading ? (
                     <Spinner />
@@ -137,7 +133,10 @@ const ItemsList = () => {
                         <Text fontSize="sm">{item.rarity.displayValue}</Text>
                         <Button
                           colorScheme="blue"
-                          onClick={() => addItemToList(item.id)}
+                          onClick={() => {
+                            // addItemToList(item.id);
+                            dispatch({ type: "add", value: item.id });
+                          }}
                         >
                           <AddIcon />
                         </Button>
